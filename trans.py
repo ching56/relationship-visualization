@@ -50,15 +50,15 @@ def getRelationValue(chara1, chara2):
 	if relation == 0:
 		return relation
 	elif relation < 1000:
-		return 1
+		return 0.1
 	elif relation >= 1000 and relation < 2000:
-		return 2
+		return 1
 	elif relation >= 2000 and relation <3000:
-		return 3
-	elif relation >= 3000 and relation <4000:
-		return 4
-	else:
 		return 5
+	elif relation >= 3000 and relation <4000:
+		return 10
+	else:
+		return 15
 
 
 
@@ -75,24 +75,15 @@ for index in data["resource"]["events"]:
 		addinf(name,index["when"][0],index["when"][1],map)
 
 #delete the role which only appear once or twice
-for index in list(map):
-	if maxEvent(map[index]) and len(map[index].events) < 3:
-		del map[index]
-
-# for index in map:
-# 		print(index)
-# 		print(len(map[index].events))
-# 		print(maxEvent(map[index]))
-# 		for event in map[index].events:
-# 		    print(event.start)
-
-
+# for index in list(map):
+# 	if maxEvent(map[index]) and len(map[index].events) < 3:
+# 		del map[index]
 
 nodes =[]
 i = 1
 for index in map:
 	d ={"id":index,"group":i}
-	i = i+1
+	i = i+1;
 	nodes.append(d)
 
 links = []
@@ -111,7 +102,6 @@ for index1 in map:
 		if ifExist == 0:
 			links.append(d)
 		print(getRelationValue(map[index1],map[index2]))
-
 
 trans = {}
 trans["nodes"] = nodes
