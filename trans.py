@@ -50,15 +50,15 @@ def getRelationValue(chara1, chara2):
 	if relation == 0:
 		return relation
 	elif relation < 1000:
-		return 1
+		return 0.1
 	elif relation >= 1000 and relation < 2000:
-		return 2
+		return 1
 	elif relation >= 2000 and relation <3000:
-		return 3
-	elif relation >= 3000 and relation <4000:
-		return 4
-	else:
 		return 5
+	elif relation >= 3000 and relation <4000:
+		return 10
+	else:
+		return 15
 
 
 
