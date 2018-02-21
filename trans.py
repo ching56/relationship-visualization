@@ -1,4 +1,5 @@
 import json
+import sys
 
 
 class event:
@@ -67,49 +68,53 @@ def getRelationValue(chara1, chara2):
         return 15
 
 
-with open('/Users/Ching/Desktop/trans.json', 'r', encoding='latin1') as f:
-    data = json.load(f)
+def main():
+    with open(sys.argv[1], 'r', encoding='latin1') as f:
+        data = json.load(f)
 
-map = {}
+        map = {}
+        for index in data["resource"]["events"]:
+            name = index.get('character', 'NA')
+            if name == 'NA':
+                continue
+            addinf(name, index["when"][0], index["when"][1], map)
 
-for index in data["resource"]["events"]:
-    name = index.get('character', 'NA')
-    if name == 'NA':
-        continue
-    addinf(name, index["when"][0], index["when"][1], map)
+        # delete the role which only appear once or twice
+        # for index in list(map):
+        # 	if maxEvent(map[index]) and len(map[index].events) < 3:
+        # 		del map[index]
 
-#delete the role which only appear once or twice
-# for index in list(map):
-# 	if maxEvent(map[index]) and len(map[index].events) < 3:
-# 		del map[index]
+        nodes = []
+        i = 1
+        for index in map:
+            d = {"id": index, "group": i}
+            i = i + 1
+            nodes.append(d)
 
-nodes = []
-i = 1
-for index in map:
-    d = {"id": index, "group": i}
-    i = i + 1
-    nodes.append(d)
+        links = []
+        for index1 in map:
+            for index2 in map:
+                if index1 == index2:
+                    continue
+                r = getRelationValue(map[index1], map[index2])
+                if r == 0:
+                    continue
+                d = {"source": index1, "target": index2, "value": r}
+                if_exist = 0
+                for i in links:
+                    if i["target"] == index1 and i["source"] == index2:
+                        if_exist = 1
+                if if_exist == 0:
+                    links.append(d)
+                print(getRelationValue(map[index1], map[index2]))
 
-links = []
-for index1 in map:
-    for index2 in map:
-        if index1 == index2:
-            continue
-        r = getRelationValue(map[index1], map[index2])
-        if r == 0:
-            continue
-        d = {"source": index1, "target": index2, "value": r}
-        ifExist = 0
-        for i in links:
-            if i["target"] == index1 and i["source"] == index2:
-                ifExist = 1
-        if ifExist == 0:
-            links.append(d)
-        print(getRelationValue(map[index1], map[index2]))
+        result = {}
+        result["nodes"] = nodes
+        result["links"] = links
 
-trans = {}
-trans["nodes"] = nodes
-trans["links"] = links
+    with open('result.json', 'w') as fp:
+        json.dump(result, fp)
 
-with open('transData.json', 'w') as fp:
-    json.dump(trans, fp)
+
+if __name__ == '__main__':
+    main()
